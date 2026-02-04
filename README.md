@@ -43,6 +43,8 @@ uv --version
   - Research Summary (a16z, OpenClaw, MoltBook, SRS)
   - Architectural Approach (pattern + infra decisions)
 
+Public report link: https://docs.google.com/document/d/1ANX4qwCp80fx3_cPv04Yg3916gFh3t3cracAG-a6hp8/edit?usp=sharing
+
 ## Notes
 - Follow Spec-Driven Development: Never implement features before specs are ratified.
 - Keep Tenx MCP Sense connected to your IDE for traceability.
