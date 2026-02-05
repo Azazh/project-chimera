@@ -69,6 +69,89 @@ flowchart LR
 
 ---
 
+## Agentic Orchestration & Routing Protocol
+
+This section specifies the deterministic routing, capability-discovery, and governance interception patterns used by Project Chimera to ensure tasks reach the correct Worker without ghost updates or logic loops.
+
+### Routing Topology: Hub-and-Spoke via OpenClaw Gateway
+- **Gateway (Message Broker)**: OpenClaw acts as the central broker, receiving Planner task envelopes and dispatching them to the appropriate Worker queues.
+- **Deterministic Dispatch**: Tasks are routed by capability tags and policy, not by ad-hoc prompts. The Gateway performs schema validation and attaches attestation headers.
+- **Spokes (Workers)**: Specialized Worker agents subscribe to queues mapped to their skills (e.g., `trend_hunter`, `image_generator`, `wallet_manager`). Workers are stateless; state synchronization is mediated through queues and storage.
+
+### Handoff Mechanism: JSON-RPC over MCP
+- **Transport**: Planner wraps each task as a JSON-RPC 2.0 call over MCP (e.g., `skill.exec`). The envelope carries uniform telemetry and attestation.
+- **Task Manifest (Metadata)**: Each task includes:
+  - `skill_required`: string (matches entry in Skill Registry under `skills/`)
+  - `priority`: enum [`LOW`, `NORMAL`, `HIGH`, `URGENT`]
+  - `timeout_ms`: integer (max execution time)
+  - `idempotency_key`: string (deduplication key to prevent duplicate side effects)
+  - `trace_id`: string (end-to-end correlation)
+  - `policy_version`: string (governance policy binding)
+
+Example manifest (excerpt):
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "skill.exec",
+  "params": {
+    "task_manifest": {
+      "skill_required": "wallet_manager",
+      "priority": "HIGH",
+      "timeout_ms": 15000,
+      "idempotency_key": "pay-20260205-abc123",
+      "trace_id": "trace-7f2c",
+      "policy_version": "finance.v1"
+    },
+    "input": { "action": "payment", "amount": 100, "currency": "USDC", "to_address": "0x..." }
+  },
+  "id": "rpc-001"
+}
+```
+
+- **Capability-Discovery**: The Gateway matches `skill_required` against the **Skill Registry** (materialized from `skills/` directory contracts). If no exact match or schema mismatch is detected, the task is rejected with `SCHEMA_VIOLATION` rather than misrouted.
+
+### Heartbeat & State Persistence
+- **Heartbeat Loop**: The Gateway runs a heartbeat every X seconds (configurable, e.g., 5–15s) to poll `TASK_QUEUE` for:
+  - `stale_assigned`: tasks assigned but not started within `grace_period_ms` → auto-unassign and requeue.
+  - `stalled_running`: tasks running beyond `timeout_ms` → emit remediation event; Planner may re-plan.
+- **State Synchronization**: Assignment and progress transitions are written atomically with OCC (`UPDATE ... WHERE version = v` → `v+1`). This prevents ghost updates when multiple dispatchers attempt changes.
+- **Context Injection (Thread Hydration)**: On assignment, the Worker receives the full thread context (prior messages, persona SOUL.md constraints, policy bindings). This avoids forgetting the original goal and enables consistent behavior across retries.
+
+### Governance Interception: Judge as Middleware
+- **Pre-Execution Gate**: If the Planner’s preliminary `policy_compliance` score is below threshold, the Gateway routes the envelope through the **Judge Agent** before any Worker execution.
+- **Middleware Contract**: The Judge validates persona alignment, safety (prompt injection, prohibited content), and policy adherence (e.g., finance slippage caps). Outputs include `status` (`APPROVED`, `REMEDIATION`, `REJECTED`), `score`, and optional `remediation_delta` for the Planner.
+- **Post-Execution Audit**: For side-effectful tasks (posts, payments), the Judge verifies outputs and reconciles against idempotency keys and attestations prior to committing global state.
+
+### Sequence Flow (Mermaid)
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant P as Planner
+  participant G as OpenClaw Gateway
+  participant W as Worker (Skill)
+  participant J as Judge
+
+  U->>P: Submit Intent (Spec-bound)
+  P->>G: JSON-RPC/MCP (Task Manifest + Input)
+  G->>J: Governance Interception (if low compliance)
+  J-->>G: Decision (APPROVED/REMEDIATION/REJECTED)
+  alt Approved
+    G->>W: Deterministic Dispatch (skill_required)
+    W-->>G: Result (with attestation)
+    G->>J: Post-Execution Audit (if side-effectful)
+    J-->>G: Audit OK
+    G-->>P: Deliver Result
+    P-->>U: Outcome
+  else Remediation/Rejected
+    G-->>P: Remediation Delta / Reject
+    P-->>U: Guidance / Blocked
+  end
+```
+
+This protocol eliminates ad-hoc routing and logic loops by binding every dispatch to explicit capabilities, centralized governance interception, and OCC-backed state transitions. Duplicate or conflicting requests are neutralized via idempotency keys and deterministic envelopes, ensuring reliable multi-agent orchestration.
+
 ### Implementation Notes (pointers to specs/tests)
 - Define contracts in `specs/technical.md` (JSON Schema; IO for Planner/Worker/Judge).
 - Add failing tests in `tests/` to assert Judge gating and OCC semantics before implementation.

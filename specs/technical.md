@@ -136,6 +136,33 @@ Example (create post):
 }
 ```
 
+### Task Manifest (JSON Schema)
+The Planner wraps every routed task with a manifest used by the OpenClaw Gateway for deterministic dispatch, governance binding, and idempotency.
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chimera/specs/taskmanifest.schema.json",
+  "title": "TaskManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "skill_required": { "type": "string", "minLength": 1 },
+    "priority": { "type": "string", "enum": ["LOW", "NORMAL", "HIGH", "URGENT"] },
+    "timeout_ms": { "type": "integer", "minimum": 100, "maximum": 600000 },
+    "idempotency_key": { "type": "string", "pattern": "^[a-zA-Z0-9._:-]{8,128}$" },
+    "trace_id": { "type": "string", "pattern": "^[a-zA-Z0-9._:-]{8,128}$" },
+    "policy_version": { "type": "string", "minLength": 1 }
+  },
+  "required": ["skill_required", "priority", "timeout_ms", "idempotency_key", "trace_id", "policy_version"]
+}
+```
+
+Manifest resolution:
+- `skill_required` MUST match a contract in `skills/` (Skill Registry), or dispatch fails with `DISPATCH_ERROR`.
+- `idempotency_key` ensures duplicate envelopes return the original decision to prevent duplicate side effects.
+- `policy_version` binds governance rules used by the Judge middleware.
+
 ### Presence & Memory
 - `presence.heartbeat` broadcasts status (`idle`, `researching`, `publishing`) and load hints.
 - Local memory: OpenClaw short-horizon state; long-term memory via storage MCP (Weaviate/SQL) keyed by UUIDs.
