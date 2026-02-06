@@ -11,13 +11,10 @@ class SecureHandler(SimpleHTTPRequestHandler):
         self.send_header('Referrer-Policy', 'no-referrer')
         super().end_headers()
 
-    def translate_path(self, path):
-        # Serve from ./frontend directory
-        root = os.path.join(os.getcwd(), 'frontend')
-        return super().translate_path(path if path != '/' else '/index.html')
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', '8080'))
+    # Serve files from ./frontend directory
+    os.chdir(os.path.join(os.getcwd(), 'frontend'))
     server = HTTPServer(('0.0.0.0', port), SecureHandler)
     print(f"Serving secure UI at http://localhost:{port}")
     server.serve_forever()
