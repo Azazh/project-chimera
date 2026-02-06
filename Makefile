@@ -46,3 +46,8 @@ ui:
 ui-secure:
 	@echo "[UI] Serving secure frontend with headers at http://localhost:8080 ..."
 	python scripts/serve_ui_secure.py
+
+.PHONY: api
+api:
+	@echo "[API] Starting FastAPI Orchestrator at http://localhost:8000 ..."
+	uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload

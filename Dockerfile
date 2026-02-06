@@ -37,7 +37,9 @@ RUN pip install --no-cache-dir \
     psycopg2-binary \
     pytest \
     coinbase \
-    openai
+    openai \
+    fastapi \
+    uvicorn
 
 # Copy project metadata and source (if any) for installing local package later
 WORKDIR /app

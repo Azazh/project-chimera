@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AcceptanceCriteria",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "trend_hunter": {
+      "type": "object",
+      "properties": {
+        "min_volume": { "type": "integer", "minimum": 0 },
+        "positive_sentiment_ratio": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "required": ["min_volume", "positive_sentiment_ratio"]
+    },
+    "image_generator": {
+      "type": "object",
+      "properties": {
+        "allowed_aspect_ratios": { "type": "array", "items": { "type": "string" } },
+        "max_count": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["allowed_aspect_ratios", "max_count"]
+    },
+    "wallet_manager": {
+      "type": "object",
+      "properties": {
+        "max_slippage_bps": { "type": "integer", "minimum": 0 },
+        "allowed_networks": { "type": "array", "items": { "type": "string" }}
+      },
+      "required": ["max_slippage_bps", "allowed_networks"]
+    }
+  },
+  "required": ["trend_hunter", "image_generator", "wallet_manager"]
+}

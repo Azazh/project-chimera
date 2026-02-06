@@ -38,6 +38,7 @@ See the routing protocol details in [research/architecture_strategy.md](research
 **CI/CD (Customs Inspector)**
 - GitHub Actions: Security Scan (gitleaks, pip-audit) and Quality Gate (ruff + pytest coverage). Pipeline fails on lint/test errors to block corrupted merges.
 - Workflow: [.github/workflows/main.yml](.github/workflows/main.yml).
+ - Containerized Tests: CI builds Docker image and runs tests inside the container to mirror runtime.
 
 **Addressing 10x Rubric Gaps**
 - Frontend: Minimal examiner dashboard in [frontend/](frontend/) with `make ui` to serve locally at http://localhost:8080.
@@ -45,6 +46,8 @@ See the routing protocol details in [research/architecture_strategy.md](research
 - Agent Rules File: Runtime rules codified in [SOUL.md](SOUL.md) with persona, thresholds, and CFO safety constraints for hydration.
  - Acceptance Criteria: Formalized in [docs/acceptance_criteria.md](docs/acceptance_criteria.md) and referenced by Planner/Judge.
  - Frontend Security: `make ui-secure` serves the dashboard with basic security headers.
+ - ADRs: See [docs/adr/](docs/adr/) for recorded architectural decisions.
+ - Contribution Workflow: [CONTRIBUTING.md](CONTRIBUTING.md) mandates feature branches and PR gates.
 
 **Quick Start**
 - Python venv:
@@ -67,6 +70,11 @@ make build
 - Serve frontend:
 ```bash
 make ui
+```
+
+- Run API (serves frontend + endpoints):
+```bash
+make api
 ```
 
 **Docker (Secure Factory)**
