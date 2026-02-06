@@ -1,0 +1,37 @@
+# Makefile — Master Control Panel for Project Chimera
+# Use: make setup | make test | make lint | make build | make run
+
+# Image name for Docker builds
+IMAGE_NAME ?= project-chimera:local
+
+.PHONY: setup test lint build run help
+
+help:
+	@echo "Targets: setup, test, lint, build, run"
+
+setup:
+	@echo "[Setup] Installing dev tools into current environment..."
+	python -m pip install --upgrade pip setuptools wheel
+	python -m pip install pytest coverage ruff pip-audit
+	@echo "[Setup] Done."
+
+# Run pytest with coverage. Tests are expected to fail initially (TDD goalposts).
+test:
+	@echo "[Test] Running pytest with coverage..."
+	pytest -q --maxfail=1 --disable-warnings --cov=. --cov-report=term-missing
+
+# Lint using ruff (configured in pyproject.toml)
+lint:
+	@echo "[Lint] Checking code quality with ruff..."
+	ruff check .
+
+# Build Docker image using the secure multi-stage Dockerfile
+build:
+	@echo "[Build] Building Docker image $(IMAGE_NAME)..."
+	docker build -t $(IMAGE_NAME) .
+
+# Execute the agent swarm locally (placeholder until runtime is implemented)
+# Override as needed to start OpenClaw Gateway / agents.
+run:
+	@echo "[Run] Starting local agent swarm (placeholder)..."
+	python -c "print('TODO: Implement gateway/agent startup. See GOVERNANCE.md & specs.')"

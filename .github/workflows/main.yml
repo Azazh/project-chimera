@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: ["*"]
+
+jobs:
+  security-scan:
+    name: Security Scan (Secrets & Vulnerabilities)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Secrets Scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: "detect --source . --no-banner"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pip-audit
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
+
+      - name: Dependency Vulnerability Audit
+        run: |
+          pip-audit --strict
+
+  quality-gate:
+    name: Quality Gate (Lint & Tests)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dev tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest coverage ruff
+
+      - name: Lint (ruff)
+        run: |
+          ruff version
+          ruff check .
+
+      - name: Tests (pytest with coverage)
+        run: |
+          pytest -q --maxfail=1 --disable-warnings --cov=. --cov-report=term-missing
