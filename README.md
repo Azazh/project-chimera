@@ -33,6 +33,7 @@ See the routing protocol details in [research/architecture_strategy.md](research
 **Governance**
 - Codebase Law: [GOVERNANCE.md](GOVERNANCE.md) enforces Spec-First, mandatory TDD, CFO-gated finance, idempotency, and OCC.
 - CFO Sub-Agent: Validates spend caps, slippage, whitelists, and attests financial calls before committing state.
+ - Agent Rules: [SOUL.md](SOUL.md) formalizes persona, thresholds, and role-specific instructions.
 
 **CI/CD (Customs Inspector)**
 - GitHub Actions: Security Scan (gitleaks, pip-audit) and Quality Gate (ruff + pytest coverage). Pipeline fails on lint/test errors to block corrupted merges.
@@ -42,6 +43,8 @@ See the routing protocol details in [research/architecture_strategy.md](research
 - Frontend: Minimal examiner dashboard in [frontend/](frontend/) with `make ui` to serve locally at http://localhost:8080.
 - Concrete MCP Config: Expanded entries in [.vscode/mcp.json](.vscode/mcp.json) and documentation in [docs/mcp_config.md](docs/mcp_config.md) with environment-driven auth headers.
 - Agent Rules File: Runtime rules codified in [SOUL.md](SOUL.md) with persona, thresholds, and CFO safety constraints for hydration.
+ - Acceptance Criteria: Formalized in [docs/acceptance_criteria.md](docs/acceptance_criteria.md) and referenced by Planner/Judge.
+ - Frontend Security: `make ui-secure` serves the dashboard with basic security headers.
 
 **Quick Start**
 - Python venv:

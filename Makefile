@@ -41,3 +41,8 @@ run:
 ui:
 	@echo "[UI] Serving ./frontend at http://localhost:8080 ... (Ctrl+C to stop)"
 	python -m http.server 8080 -d frontend
+
+.PHONY: ui-secure
+ui-secure:
+	@echo "[UI] Serving secure frontend with headers at http://localhost:8080 ..."
+	python scripts/serve_ui_secure.py

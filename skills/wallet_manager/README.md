@@ -19,6 +19,9 @@ The `wallet_manager` skill enables Worker agents to perform on-chain transaction
     "currency": { "type": "string", "pattern": "^[A-Z]{3,5}$", "description": "Currency code (e.g., BTC, ETH, USDC)." },
     "to_address": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$", "description": "Destination wallet address (for transfer/payment)." },
     "slippage_tolerance_bps": { "type": "integer", "minimum": 0, "maximum": 1000, "description": "Max slippage in basis points (0-1000)." },
+    "time_in_force": { "type": "string", "enum": ["IOC", "FOK", "GTD"], "description": "Execution policy: Immediate-Or-Cancel, Fill-Or-Kill, Good-Till-Date." },
+    "network": { "type": "string", "enum": ["ethereum", "base", "polygon"], "description": "Blockchain network to use." },
+    "whitelist_required": { "type": "boolean", "default": true, "description": "If true, destination must be whitelisted." },
     "idempotency_key": { "type": "string", "description": "Unique key for idempotency enforcement." }
   },
   "required": ["action", "currency", "idempotency_key"],
@@ -40,6 +43,8 @@ The `wallet_manager` skill enables Worker agents to perform on-chain transaction
     "balance": { "type": "number", "description": "Wallet balance (for balance_check)." },
     "currency": { "type": "string" },
     "timestamp": { "type": "string", "format": "date-time" },
+    "network": { "type": "string" },
+    "time_in_force": { "type": "string" },
     "error_code": { "type": "string" }
   },
   "required": ["status", "currency", "timestamp"],
@@ -55,7 +60,10 @@ The `wallet_manager` skill enables Worker agents to perform on-chain transaction
 | SCHEMA_VIOLATION      | Input does not match schema                  | Halt, notify Planner          |
 | SLIPPAGE_EXCEEDED     | Actual slippage > allowed tolerance          | Abort, log, notify CFO agent  |
 | ADDRESS_INVALID       | Wallet address format invalid                | Return error, request fix     |
+| TIF_VIOLATION         | Time-in-force cannot be honored              | Abort, retry with adjusted TIF|
+| NETWORK_UNSUPPORTED   | Network not supported                        | Reject, request supported net |
 
 ## Idempotency Policy
 - All requests must include a unique `idempotency_key`.
 - Duplicate requests with the same key return the original result, preventing double spending or duplicate transactions.
+ - Idempotency scope includes (`action`, `amount`, `currency`, `to_address`, `network`, `time_in_force`).

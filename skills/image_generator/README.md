@@ -17,7 +17,10 @@ The `image_generator` skill enables Worker agents to create visual assets using 
     "prompt": { "type": "string", "description": "Text prompt describing the desired image." },
     "model": { "type": "string", "enum": ["dalle", "midjourney"], "description": "Image generation model to use." },
     "aspect_ratio": { "type": "string", "enum": ["1:1", "16:9", "9:16", "4:5"], "description": "Aspect ratio for the output image." },
-    "style": { "type": "string", "description": "Optional style or mood (e.g., 'cyberpunk', 'minimalist')." }
+    "style": { "type": "string", "description": "Optional style or mood (e.g., 'cyberpunk', 'minimalist')." },
+    "count": { "type": "integer", "minimum": 1, "maximum": 4, "default": 1, "description": "Number of images to generate." },
+    "seed": { "type": "integer", "minimum": 0, "description": "Optional deterministic seed for reproducibility." },
+    "format": { "type": "string", "enum": ["png", "jpg"], "default": "png", "description": "Output image format." }
   },
   "required": ["prompt", "model", "aspect_ratio"],
   "additionalProperties": false
@@ -53,3 +56,4 @@ The `image_generator` skill enables Worker agents to create visual assets using 
 ## Idempotency Policy
 - Requests with identical `prompt`, `model`, and `aspect_ratio` within a 10-minute window are deduplicated.
 - The skill returns the same image or a reference to the original request to prevent duplicate asset generation.
+ - If `seed` and `format` are specified, exact outputs are expected; otherwise, dedup returns canonical first result.

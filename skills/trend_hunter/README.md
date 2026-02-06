@@ -14,7 +14,7 @@ The `trend_hunter` skill enables Worker agents to discover and analyze viral tre
   "title": "TrendHunterInput",
   "type": "object",
   "properties": {
-    "query": { "type": "string", "description": "Search term or hashtag to focus the trend analysis." },
+    "query": { "type": "string", "minLength": 2, "pattern": "^#[A-Za-z0-9_]+|[A-Za-z0-9 ._-]+$", "description": "Search term or hashtag to focus the trend analysis." },
     "platforms": {
       "type": "array",
       "items": { "type": "string", "enum": ["twitter", "reddit", "coingecko", "dune", "tiktok"] },
@@ -25,7 +25,8 @@ The `trend_hunter` skill enables Worker agents to discover and analyze viral tre
       "pattern": "^\\d+[hdw]$",
       "description": "Time window for trend search (e.g., '24h', '7d', '1w')."
     },
-    "min_volume": { "type": "integer", "minimum": 0, "description": "Minimum mention or trading volume." }
+    "min_volume": { "type": "integer", "minimum": 0, "description": "Minimum mention or trading volume." },
+    "language": { "type": "string", "enum": ["en"], "description": "Language filter (currently constrained to English)." }
   },
   "required": ["query", "platforms", "time_window"],
   "additionalProperties": false
@@ -53,7 +54,8 @@ The `trend_hunter` skill enables Worker agents to discover and analyze viral tre
         "required": ["name", "platform", "volume", "sentiment", "url"]
       }
     },
-    "queried_at": { "type": "string", "format": "date-time" }
+    "queried_at": { "type": "string", "format": "date-time" },
+    "criteria_met": { "type": "boolean", "description": "Acceptance criteria summary: true if trends meet campaign thresholds." }
   },
   "required": ["trends", "queried_at"],
   "additionalProperties": false
@@ -71,3 +73,4 @@ The `trend_hunter` skill enables Worker agents to discover and analyze viral tre
 ## Idempotency Policy
 - Requests with identical `query`, `platforms`, and `time_window` within a 5-minute window are deduplicated.
 - The skill returns the same result for duplicate requests to prevent redundant API calls and ensure consistency.
+ - Acceptance criteria thresholds (e.g., min_volume, sentiment proportion) are applied deterministically; identical inputs yield identical `criteria_met`.
