@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import Mock, patch
 
 # Placeholder imports for your future OCC implementation.
 from chimera.wallet import Wallet, ConsistencyError

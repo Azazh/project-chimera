@@ -1,8 +1,7 @@
 import pytest
-from unittest.mock import Mock
 
 # These imports are placeholders for your future implementation.
-from chimera.judge import JudgeAgent, ConsistencyError
+from chimera.judge import JudgeAgent
 
 @pytest.fixture
 def judge():
