@@ -47,6 +47,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest coverage ruff
+      - name: Auto-fix trivial lint (ruff --fix)
+        run: |
+          ruff --fix .
 
       - name: Lint (ruff)
         run: |
