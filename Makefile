@@ -35,3 +35,9 @@ build:
 run:
 	@echo "[Run] Starting local agent swarm (placeholder)..."
 	python -c "print('TODO: Implement gateway/agent startup. See GOVERNANCE.md & specs.')"
+
+# Serve the minimal frontend for examiners (defaults to :8080)
+.PHONY: ui
+ui:
+	@echo "[UI] Serving ./frontend at http://localhost:8080 ... (Ctrl+C to stop)"
+	python -m http.server 8080 -d frontend

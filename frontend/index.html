@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Chimera — Orchestrator Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Project Chimera</h1>
+    <p>Spec-Driven Agentic Orchestration — Planner • Gateway • Workers • Judge</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Routing & Governance</h2>
+      <ul>
+        <li>Deterministic Dispatch via <strong>OpenClaw Gateway</strong></li>
+        <li>Policy Gating via <strong>Judge</strong> (pre/post execution)</li>
+        <li>OCC + Idempotency to prevent ghost updates</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>MCP Servers (Config Hints)</h2>
+      <div id="mcp-servers" class="cards"></div>
+      <p class="hint">Set environment variables to enable MCP auth (see README and .vscode/mcp.json).</p>
+    </section>
+
+    <section>
+      <h2>Quick Links</h2>
+      <ul>
+        <li><a href="../README.md">README</a></li>
+        <li><a href="../research/architecture_strategy.md">Architecture Strategy</a></li>
+        <li><a href="../specs/technical.md">Technical Specs</a></li>
+        <li><a href="../GOVERNANCE.md">Governance</a></li>
+        <li><a href="../SOUL.md">Agent Rules (SOUL)</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© Project Chimera</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

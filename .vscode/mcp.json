@@ -1,0 +1,54 @@
+{
+	"servers": {
+		"tenxfeedbackanalytics": {
+			"url": "https://mcppulse.10academy.org/proxy",
+			"type": "http",
+			"headers": {
+				"X-Device": "linux",
+				"X-Coding-Tool": "vscode"
+			}
+		},
+		"moltbook": {
+			"url": "https://api.moltbook.example/mcp",
+			"type": "http",
+			"headers": {
+				"Authorization": "Bearer ${MOLTBOOK_API_KEY}",
+				"X-Policy-Version": "${POLICY_VERSION}"
+			}
+		},
+		"coinbase_agentkit": {
+			"url": "https://api.coinbase.com/agentkit/mcp",
+			"type": "http",
+			"headers": {
+				"CB-API-KEY": "${COINBASE_API_KEY}",
+				"CB-API-SECRET": "${COINBASE_API_SECRET}",
+				"CB-API-PASSPHRASE": "${COINBASE_API_PASSPHRASE}",
+				"X-Policy-Version": "${POLICY_VERSION}"
+			}
+		},
+		"openai": {
+			"url": "https://api.openai.com/v1/mcp",
+			"type": "http",
+			"headers": {
+				"Authorization": "Bearer ${OPENAI_API_KEY}",
+				"OpenAI-Organization": "${OPENAI_ORG}"
+			}
+		},
+		"weaviate": {
+			"url": "${WEAVIATE_ENDPOINT}/mcp",
+			"type": "http",
+			"headers": {
+				"X-Api-Key": "${WEAVIATE_API_KEY}"
+			}
+		},
+		"twitter": {
+			"url": "https://api.twitter.example/mcp",
+			"type": "http",
+			"headers": {
+				"Authorization": "Bearer ${TWITTER_BEARER_TOKEN}",
+				"X-Policy-Version": "${POLICY_VERSION}"
+			}
+		}
+	},
+	"inputs": []
+}

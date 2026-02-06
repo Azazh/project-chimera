@@ -38,6 +38,11 @@ See the routing protocol details in [research/architecture_strategy.md](research
 - GitHub Actions: Security Scan (gitleaks, pip-audit) and Quality Gate (ruff + pytest coverage). Pipeline fails on lint/test errors to block corrupted merges.
 - Workflow: [.github/workflows/main.yml](.github/workflows/main.yml).
 
+**Addressing 10x Rubric Gaps**
+- Frontend: Minimal examiner dashboard in [frontend/](frontend/) with `make ui` to serve locally at http://localhost:8080.
+- Concrete MCP Config: Expanded entries in [.vscode/mcp.json](.vscode/mcp.json) and documentation in [docs/mcp_config.md](docs/mcp_config.md) with environment-driven auth headers.
+- Agent Rules File: Runtime rules codified in [SOUL.md](SOUL.md) with persona, thresholds, and CFO safety constraints for hydration.
+
 **Quick Start**
 - Python venv:
 ```bash
@@ -54,6 +59,11 @@ make test
 - Build container:
 ```bash
 make build
+```
+
+- Serve frontend:
+```bash
+make ui
 ```
 
 **Docker (Secure Factory)**
