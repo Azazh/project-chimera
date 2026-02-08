@@ -33,8 +33,8 @@ build:
 # Execute the agent swarm locally (placeholder until runtime is implemented)
 # Override as needed to start OpenClaw Gateway / agents.
 run:
-	@echo "[Run] Starting local agent swarm (placeholder)..."
-	python -c "print('TODO: Implement gateway/agent startup. See GOVERNANCE.md & specs.')"
+	@echo "[Run] Starting gateway demo..."
+	python chimera/run_demo.py
 
 # Serve the minimal frontend for examiners (defaults to :8080)
 .PHONY: ui
